@@ -1,0 +1,16 @@
+bundle:
+  name: segment-video-app
+
+resources:
+  apps:
+    segment_video_app:
+      name: segment-video-app
+      description: "Upload a video + prompt; trigger Databricks Job to segment; display output from Volumes."
+      source_code_path: ./app
+
+targets:
+  dev:
+    default: true
+    mode: development
+
+
