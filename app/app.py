@@ -250,7 +250,7 @@ app.layout = dbc.Container(
                                         [
                                             dbc.Col(
                                                 [
-                                                    html.Label("1) Upload video"),
+                                                    html.Div("1) Upload video", style={"fontWeight": "bold", "marginBottom": "0.5rem"}),
                                                     dcc.Upload(
                                                         id="upload-video",
                                                         children=html.Div(
@@ -258,24 +258,34 @@ app.layout = dbc.Container(
                                                                 html.Div(
                                                                     [
                                                                         "Drag & drop or ",
-                                                                        html.B("browse"),
+                                                                        html.Span("browse", className="browse-link"),
                                                                         " to upload",
-                                                                    ]
+                                                                    ],
+                                                                    style={"marginBottom": "8px"}
                                                                 ),
                                                                 html.Small(
                                                                     "Tip: large videos may be slow via browser upload.",
                                                                     className="text-muted",
                                                                 ),
-                                                            ]
+                                                            ],
+                                                            style={
+                                                                "display": "flex",
+                                                                "flexDirection": "column",
+                                                                "justifyContent": "center",
+                                                                "alignItems": "center",
+                                                                "height": "100%",
+                                                            }
                                                         ),
                                                         style={
                                                             "width": "100%",
                                                             "height": "120px",
-                                                            "lineHeight": "120px",
                                                             "borderWidth": "2px",
                                                             "borderStyle": "dashed",
                                                             "borderRadius": "10px",
                                                             "textAlign": "center",
+                                                            "display": "flex",
+                                                            "alignItems": "center",
+                                                            "justifyContent": "center",
                                                         },
                                                         multiple=False,
                                                     ),
@@ -293,7 +303,7 @@ app.layout = dbc.Container(
                                         [
                                             dbc.Col(
                                                 [
-                                                    html.Label("2) Prompt"),
+                                                    html.Div("2) Prompt", style={"fontWeight": "bold", "marginBottom": "0.5rem"}),
                                                     dbc.Textarea(
                                                         id="prompt",
                                                         placeholder="Describe what to segment in the video...",

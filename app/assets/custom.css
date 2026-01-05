@@ -1,0 +1,9 @@
+.browse-link {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.browse-link:hover {
+    text-decoration: underline;
+}
+
