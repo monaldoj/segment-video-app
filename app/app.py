@@ -296,17 +296,39 @@ app.layout = dbc.Container(
                                                                         },
                                                                         multiple=False,
                                                                     ),
-                                                                    html.Div(
-                                                                        id="upload-status",
-                                                                        className="mt-2",
-                                                                    ),
-                                                                ],
+                                                            html.Div(
+                                                                id="upload-status",
+                                                                className="mt-2",
                                                             ),
                                                         ],
-                                                        width=12,
-                                                    )
-                                                ]
-                                            ),
+                                                    ),
+                                                    html.Div(
+                                                        [
+                                                            html.Small("Or load existing file from volume:", className="text-muted"),
+                                                            dbc.InputGroup(
+                                                                [
+                                                                    dbc.Input(
+                                                                        id="existing-filename",
+                                                                        placeholder="e.g. my_video.mp4",
+                                                                        type="text",
+                                                                    ),
+                                                                    dbc.Button(
+                                                                        "Load",
+                                                                        id="load-existing",
+                                                                        color="secondary",
+                                                                        outline=True,
+                                                                    ),
+                                                                ],
+                                                                className="mt-2",
+                                                            ),
+                                                        ],
+                                                        className="mt-3",
+                                                    ),
+                                                ],
+                                                width=12,
+                                            )
+                                        ]
+                                    ),
                                             html.Hr(),
                                             dbc.Row(
                                                 [
@@ -521,6 +543,52 @@ def handle_upload(contents: str, filename: str):
 
 
 @app.callback(
+    Output("store-upload-path", "data", allow_duplicate=True),
+    Output("store-output-path", "data", allow_duplicate=True),
+    Output("upload-status", "children", allow_duplicate=True),
+    Input("load-existing", "n_clicks"),
+    State("existing-filename", "value"),
+    prevent_initial_call=True,
+)
+def handle_load_existing(n_clicks: int, filename: Optional[str]):
+    if not n_clicks:
+        raise dash.exceptions.PreventUpdate
+    if not filename or not filename.strip():
+        return None, None, dbc.Alert("Enter a filename to load.", color="warning")
+
+    w = _get_client()
+    safe_name = _sanitize_filename(filename.strip())
+    input_path = f"{INPUTS_DIR}/{safe_name}"
+    output_path = f"{OUTPUTS_DIR}/{safe_name}"
+
+    # Check if the file exists in the inputs volume
+    if not _output_exists(w, input_path):
+        return (
+            None,
+            None,
+            dbc.Alert(
+                [
+                    html.Div("File not found in inputs volume."),
+                    html.Div([html.B("Looked for: "), input_path], className="small text-muted"),
+                ],
+                color="danger",
+            ),
+        )
+
+    return (
+        input_path,
+        output_path,
+        dbc.Alert(
+            [
+                html.Div([html.B("Loaded existing: "), safe_name]),
+                html.Div([html.B("Input path: "), input_path], className="small text-muted"),
+            ],
+            color="success",
+        ),
+    )
+
+
+@app.callback(
     Output("store-run-id", "data"),
     Output("poll-interval", "disabled"),
     Output("run-status", "children"),
@@ -711,13 +779,14 @@ def lookup_output(n_clicks: int, filename: Optional[str]):
     Output("truncate", "value", allow_duplicate=True),
     Output("poll-interval", "disabled", allow_duplicate=True),
     Output("input-controls", "style", allow_duplicate=True),
+    Output("existing-filename", "value", allow_duplicate=True),
     Input("reset", "n_clicks"),
     prevent_initial_call=True,
 )
 def reset_all(n_clicks: int):
     if not n_clicks:
         raise dash.exceptions.PreventUpdate
-    return None, None, None, None, None, None, None, None, "", 5, "false", True, {}
+    return None, None, None, None, None, None, None, None, "", 5, "false", True, {}, ""
 
 
 if __name__ == "__main__":
