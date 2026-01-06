@@ -246,143 +246,154 @@ app.layout = dbc.Container(
                         dbc.Card(
                             dbc.CardBody(
                                 [
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(
+                                    html.Div(
+                                        id="input-controls",
+                                        children=[
+                                            dbc.Row(
                                                 [
-                                                    html.Div("1) Upload video", style={"fontWeight": "bold", "marginBottom": "0.5rem"}),
-                                                    dcc.Upload(
-                                                        id="upload-video",
-                                                        children=html.Div(
-                                                            [
-                                                                html.Div(
-                                                                    [
-                                                                        "Drag & drop or ",
-                                                                        html.Span("browse", className="browse-link"),
-                                                                        " to upload",
-                                                                    ],
-                                                                    style={"marginBottom": "8px"}
-                                                                ),
-                                                                html.Small(
-                                                                    "Tip: large videos may be slow via browser upload.",
-                                                                    className="text-muted",
-                                                                ),
-                                                            ],
-                                                            style={
-                                                                "display": "flex",
-                                                                "flexDirection": "column",
-                                                                "justifyContent": "center",
-                                                                "alignItems": "center",
-                                                                "height": "100%",
-                                                            }
-                                                        ),
-                                                        style={
-                                                            "width": "100%",
-                                                            "height": "120px",
-                                                            "borderWidth": "2px",
-                                                            "borderStyle": "dashed",
-                                                            "borderRadius": "10px",
-                                                            "textAlign": "center",
-                                                            "display": "flex",
-                                                            "alignItems": "center",
-                                                            "justifyContent": "center",
-                                                        },
-                                                        multiple=False,
-                                                    ),
-                                                    html.Div(
-                                                        id="upload-status",
-                                                        className="mt-2",
-                                                    ),
-                                                ],
-                                                width=12,
-                                            )
-                                        ]
-                                    ),
-                                    html.Hr(),
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(
-                                                [
-                                                    html.Div("2) Prompt", style={"fontWeight": "bold", "marginBottom": "0.5rem"}),
-                                                    dbc.Textarea(
-                                                        id="prompt",
-                                                        placeholder="Describe what to segment in the video...",
-                                                        style={"minHeight": "110px"},
-                                                    ),
-                                                ],
-                                                width=12,
-                                            )
-                                        ]
-                                    ),
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(
-                                                [
-                                                    html.Label("Frame stride"),
-                                                    dbc.Input(
-                                                        id="frame-stride",
-                                                        type="number",
-                                                        min=1,
-                                                        step=1,
-                                                        value=5,
-                                                    ),
-                                                    html.Small(
-                                                        "Process every Nth frame (higher = faster, less accurate).",
-                                                        className="text-muted",
-                                                    ),
-                                                ],
-                                                width=12,
-                                                md=6,
-                                            ),
-                                            dbc.Col(
-                                                [
-                                                    html.Label("Truncate output"),
-                                                    dbc.RadioItems(
-                                                        id="truncate",
-                                                        options=[
-                                                            {"label": "False (full video)", "value": "false"},
-                                                            {"label": "True (only matches)", "value": "true"},
+                                                    dbc.Col(
+                                                        [
+                                                            html.Div("1) Upload video", style={"fontWeight": "bold", "marginBottom": "0.5rem"}),
+                                                            dcc.Loading(
+                                                                id="loading-upload",
+                                                                type="default",
+                                                                children=[
+                                                                    dcc.Upload(
+                                                                        id="upload-video",
+                                                                        children=html.Div(
+                                                                            [
+                                                                                html.Div(
+                                                                                    [
+                                                                                        "Drag & drop or ",
+                                                                                        html.Span("browse", className="browse-link"),
+                                                                                        " to upload",
+                                                                                    ],
+                                                                                    style={"marginBottom": "8px"}
+                                                                                ),
+                                                                                html.Small(
+                                                                                    "Tip: large videos may be slow via browser upload.",
+                                                                                    className="text-muted",
+                                                                                ),
+                                                                            ],
+                                                                            style={
+                                                                                "display": "flex",
+                                                                                "flexDirection": "column",
+                                                                                "justifyContent": "center",
+                                                                                "alignItems": "center",
+                                                                                "height": "100%",
+                                                                            }
+                                                                        ),
+                                                                        style={
+                                                                            "width": "100%",
+                                                                            "height": "120px",
+                                                                            "borderWidth": "2px",
+                                                                            "borderStyle": "dashed",
+                                                                            "borderRadius": "10px",
+                                                                            "textAlign": "center",
+                                                                            "display": "flex",
+                                                                            "alignItems": "center",
+                                                                            "justifyContent": "center",
+                                                                        },
+                                                                        multiple=False,
+                                                                    ),
+                                                                    html.Div(
+                                                                        id="upload-status",
+                                                                        className="mt-2",
+                                                                    ),
+                                                                ],
+                                                            ),
                                                         ],
-                                                        value="false",
-                                                        inline=True,
+                                                        width=12,
+                                                    )
+                                                ]
+                                            ),
+                                            html.Hr(),
+                                            dbc.Row(
+                                                [
+                                                    dbc.Col(
+                                                        [
+                                                            html.Div("2) Prompt", style={"fontWeight": "bold", "marginBottom": "0.5rem"}),
+                                                            dbc.Textarea(
+                                                                id="prompt",
+                                                                placeholder="Describe what to segment in the video...",
+                                                                style={"minHeight": "110px"},
+                                                            ),
+                                                        ],
+                                                        width=12,
+                                                    )
+                                                ]
+                                            ),
+                                            dbc.Row(
+                                                [
+                                                    dbc.Col(
+                                                        [
+                                                            html.Label("Frame stride"),
+                                                            dbc.Input(
+                                                                id="frame-stride",
+                                                                type="number",
+                                                                min=1,
+                                                                step=1,
+                                                                value=5,
+                                                            ),
+                                                            html.Small(
+                                                                "Process every Nth frame (higher = faster, less accurate).",
+                                                                className="text-muted",
+                                                            ),
+                                                        ],
+                                                        width=12,
+                                                        md=6,
                                                     ),
-                                                    html.Small(
-                                                        "If true, only output segments where the prompt is found.",
-                                                        className="text-muted",
+                                                    dbc.Col(
+                                                        [
+                                                            html.Label("Truncate output"),
+                                                            dbc.RadioItems(
+                                                                id="truncate",
+                                                                options=[
+                                                                    {"label": "False (full video)", "value": "false"},
+                                                                    {"label": "True (only matches)", "value": "true"},
+                                                                ],
+                                                                value="false",
+                                                                inline=True,
+                                                            ),
+                                                            html.Small(
+                                                                "If true, only output segments where the prompt is found.",
+                                                                className="text-muted",
+                                                            ),
+                                                        ],
+                                                        width=12,
+                                                        md=6,
+                                                        className="mt-3 mt-md-0",
                                                     ),
                                                 ],
-                                                width=12,
-                                                md=6,
-                                                className="mt-3 mt-md-0",
+                                                className="mt-3",
+                                            ),
+                                            html.Hr(),
+                                            dbc.Row(
+                                                [
+                                                    dbc.Col(
+                                                        [
+                                                            dbc.Button(
+                                                                "3) Run auto-segment job",
+                                                                id="run-job",
+                                                                color="primary",
+                                                                className="me-2",
+                                                            ),
+                                                            dbc.Button(
+                                                                "Reset",
+                                                                id="reset",
+                                                                color="secondary",
+                                                                outline=True,
+                                                            ),
+                                                        ],
+                                                        width=12,
+                                                    )
+                                                ]
                                             ),
                                         ],
-                                        className="mt-3",
                                     ),
-                                    html.Hr(),
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(
-                                                [
-                                                    dbc.Button(
-                                                        "3) Run auto-segment job",
-                                                        id="run-job",
-                                                        color="primary",
-                                                        className="me-2",
-                                                    ),
-                                                    dbc.Button(
-                                                        "Reset",
-                                                        id="reset",
-                                                        color="secondary",
-                                                        outline=True,
-                                                    ),
-                                                    html.Div(
-                                                        id="run-status",
-                                                        className="mt-3",
-                                                    ),
-                                                ],
-                                                width=12,
-                                            )
-                                        ]
+                                    html.Div(
+                                        id="run-status",
+                                        className="mt-3",
                                     ),
                                 ]
                             ),
@@ -391,7 +402,7 @@ app.layout = dbc.Container(
                         dcc.Store(id="store-upload-path"),
                         dcc.Store(id="store-output-path"),
                         dcc.Store(id="store-run-id"),
-                        dcc.Interval(id="poll-interval", interval=5_000, n_intervals=0, disabled=True),
+                        dcc.Interval(id="poll-interval", interval=2500, n_intervals=0, disabled=True),
                     ],
                     width=12,
                     lg=6,
@@ -513,6 +524,7 @@ def handle_upload(contents: str, filename: str):
     Output("store-run-id", "data"),
     Output("poll-interval", "disabled"),
     Output("run-status", "children"),
+    Output("input-controls", "style"),
     Input("run-job", "n_clicks"),
     State("store-upload-path", "data"),
     State("prompt", "value"),
@@ -530,16 +542,16 @@ def start_job(
     if not n_clicks:
         raise dash.exceptions.PreventUpdate
     if not upload_path:
-        return None, True, dbc.Alert("Upload a video first.", color="warning")
+        return None, True, dbc.Alert("Upload a video first.", color="warning"), {}
     if not prompt or not prompt.strip():
-        return None, True, dbc.Alert("Enter a prompt first.", color="warning")
+        return None, True, dbc.Alert("Enter a prompt first.", color="warning"), {}
 
     try:
         fs = int(frame_stride) if frame_stride is not None else 5
     except Exception:
-        return None, True, dbc.Alert("Frame stride must be a positive integer.", color="warning")
+        return None, True, dbc.Alert("Frame stride must be a positive integer.", color="warning"), {}
     if fs < 1:
-        return None, True, dbc.Alert("Frame stride must be a positive integer.", color="warning")
+        return None, True, dbc.Alert("Frame stride must be a positive integer.", color="warning"), {}
 
     tr = str(truncate).lower() == "true" if truncate is not None else False
 
@@ -553,7 +565,7 @@ def start_job(
             truncate=tr,
         )
     except Exception as e:
-        return None, True, dbc.Alert(f"Failed to start job: {e}", color="danger")
+        return None, True, dbc.Alert(f"Failed to start job: {e}", color="danger"), {}
 
     return (
         run_id,
@@ -562,6 +574,7 @@ def start_job(
             [html.Div([html.B("Started run_id: "), str(run_id)]), html.Div("Polling job status...")],
             color="primary",
         ),
+        {"pointerEvents": "none", "opacity": 0.5},
     )
 
 
@@ -570,6 +583,7 @@ def start_job(
     Output("poll-interval", "disabled", allow_duplicate=True),
     Output("output-video", "children"),
     Output("output-description", "children"),
+    Output("input-controls", "style", allow_duplicate=True),
     Input("poll-interval", "n_intervals"),
     State("store-run-id", "data"),
     State("store-output-path", "data"),
@@ -583,7 +597,7 @@ def poll_run(n: int, run_id: Optional[int], output_path: Optional[str]):
     try:
         rv = _get_run_view(w, int(run_id))
     except Exception as e:
-        return dbc.Alert(f"Error polling run: {e}", color="danger"), True, dash.no_update, dash.no_update
+        return dbc.Alert(f"Error polling run: {e}", color="danger"), True, dash.no_update, dash.no_update, {}
 
     elapsed = _fmt_elapsed(_elapsed_seconds(rv))
 
@@ -598,7 +612,11 @@ def poll_run(n: int, run_id: Optional[int], output_path: Optional[str]):
         status_bits.append(html.Div([html.B("Message: "), rv.state_message], className="small text-muted"))
 
     # If job terminated, stop polling job status and begin checking for output existence.
-    if rv.life_cycle_state == "TERMINATED":
+    # if rv.life_cycle_state == "TERMINATED":
+    if rv.result_state:
+        # Ungray input controls when job terminates (any result state)
+        controls_style = {}
+        
         if output_path and _output_exists(w, output_path):
             url = _download_url(w, output_path)
             video = html.Video(src=url, controls=True, style={"width": "100%", "maxHeight": "520px"})
@@ -614,7 +632,7 @@ def poll_run(n: int, run_id: Optional[int], output_path: Optional[str]):
                     ["Description: ", html.Span("No description found yet.", className="text-muted")]
                 )
             )
-            return dbc.Alert(status_bits, color="success"), True, video, desc
+            return dbc.Alert(status_bits, color="success"), True, video, desc, controls_style
 
         # Job finished but output not present yet. Keep polling a bit longer.
         waiting = dbc.Alert(
@@ -626,10 +644,10 @@ def poll_run(n: int, run_id: Optional[int], output_path: Optional[str]):
             ],
             color="warning",
         )
-        return waiting, False, dash.no_update, dash.no_update
+        return waiting, False, dash.no_update, dash.no_update, controls_style
 
-    # Still running
-    return dbc.Alert(status_bits, color="primary"), False, dash.no_update, dash.no_update
+    # Still running - keep grayed out
+    return dbc.Alert(status_bits, color="primary"), False, dash.no_update, dash.no_update, {"pointerEvents": "none", "opacity": 0.5}
 
 
 @app.callback(
@@ -692,13 +710,14 @@ def lookup_output(n_clicks: int, filename: Optional[str]):
     Output("frame-stride", "value", allow_duplicate=True),
     Output("truncate", "value", allow_duplicate=True),
     Output("poll-interval", "disabled", allow_duplicate=True),
+    Output("input-controls", "style", allow_duplicate=True),
     Input("reset", "n_clicks"),
     prevent_initial_call=True,
 )
 def reset_all(n_clicks: int):
     if not n_clicks:
         raise dash.exceptions.PreventUpdate
-    return None, None, None, None, None, None, None, None, "", 5, "false", True
+    return None, None, None, None, None, None, None, None, "", 5, "false", True, {}
 
 
 if __name__ == "__main__":
