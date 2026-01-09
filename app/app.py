@@ -355,7 +355,7 @@ app.layout = dbc.Container(
                                                                 type="number",
                                                                 min=1,
                                                                 step=1,
-                                                                value=5,
+                                                                value=30,
                                                             ),
                                                             html.Small(
                                                                 "Process every Nth frame (higher = faster, less accurate).",
