@@ -762,11 +762,11 @@ def lookup_output(n_clicks: int, filename: Optional[str]):
         desc_txt = _download_text(w, desc_path)
         desc = (
             dbc.Alert(
-                [html.B("Description:"), html.Br(), dcc.Markdown(desc_txt or "No description found yet.")],
+                [html.B("AI-Generated Description:"), html.Br(), dcc.Markdown(desc_txt or "No description found yet.")],
                 color="light",
             )
             if desc_txt is not None
-            else html.Div(["Description: ", html.Span("No description found yet.", className="text-muted")])
+            else html.Div(["AI-Generated Description: ", html.Span("No description found yet.", className="text-muted")])
         )
         return (
             video,
