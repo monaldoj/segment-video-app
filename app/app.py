@@ -271,7 +271,7 @@ app.layout = dbc.Container(
                                                                                     style={"marginBottom": "8px"}
                                                                                 ),
                                                                                 html.Small(
-                                                                                    "Tip: large videos may be slow via browser upload.",
+                                                                                    "Tip: large videos may not work via browser upload. Try loading from existing Volume location. ",
                                                                                     className="text-muted",
                                                                                 ),
                                                                             ],
@@ -337,7 +337,7 @@ app.layout = dbc.Container(
                                                             html.Div("2) Prompt", style={"fontWeight": "bold", "marginBottom": "0.5rem"}),
                                                             dbc.Textarea(
                                                                 id="prompt",
-                                                                placeholder="Describe what to segment in the video...",
+                                                                placeholder="Describe objects to find in the video...",
                                                                 style={"minHeight": "110px"},
                                                             ),
                                                         ],
