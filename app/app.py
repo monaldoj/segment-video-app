@@ -228,7 +228,7 @@ app.layout = dbc.Container(
                             [
                                 html.Div(
                                     "Upload a video, enter a prompt, then run the Databricks job. "
-                                    "When it finishes, the output video (same filename) will appear."
+                                    "When it finishes, the output video will appear."
                                 )
                             ],
                             className="text-muted",
@@ -309,7 +309,7 @@ app.layout = dbc.Container(
                                                                 [
                                                                     dbc.Input(
                                                                         id="existing-filename",
-                                                                        placeholder="e.g. my_video.mp4",
+                                                                        placeholder="e.g. my_video.mp4 or /Volumes/catalog/schema/volume/file.mp4",
                                                                         type="text",
                                                                     ),
                                                                     dbc.Button(
@@ -374,7 +374,7 @@ app.layout = dbc.Container(
                                                                     {"label": "False (full video)", "value": "false"},
                                                                     {"label": "True (only matches)", "value": "true"},
                                                                 ],
-                                                                value="false",
+                                                                value="true",
                                                                 inline=True,
                                                             ),
                                                             html.Small(
@@ -557,18 +557,30 @@ def handle_load_existing(n_clicks: int, filename: Optional[str]):
         return None, None, dbc.Alert("Enter a filename to load.", color="warning")
 
     w = _get_client()
-    safe_name = _sanitize_filename(filename.strip())
-    input_path = f"{INPUTS_DIR}/{safe_name}"
-    output_path = f"{OUTPUTS_DIR}/{safe_name}"
+    filename_stripped = filename.strip()
+    
+    # Check if user provided a full volume path
+    if filename_stripped.startswith("/Volumes/"):
+        input_path = filename_stripped
+        # Extract just the filename for output
+        basename = os.path.basename(input_path)
+        output_path = f"{OUTPUTS_DIR}/{basename}"
+        display_name = input_path
+    else:
+        # Use default inputs directory
+        safe_name = _sanitize_filename(filename_stripped)
+        input_path = f"{INPUTS_DIR}/{safe_name}"
+        output_path = f"{OUTPUTS_DIR}/{safe_name}"
+        display_name = safe_name
 
-    # Check if the file exists in the inputs volume
+    # Check if the file exists in the volume
     if not _output_exists(w, input_path):
         return (
             None,
             None,
             dbc.Alert(
                 [
-                    html.Div("File not found in inputs volume."),
+                    html.Div("File not found."),
                     html.Div([html.B("Looked for: "), input_path], className="small text-muted"),
                 ],
                 color="danger",
@@ -580,7 +592,7 @@ def handle_load_existing(n_clicks: int, filename: Optional[str]):
         output_path,
         dbc.Alert(
             [
-                html.Div([html.B("Loaded existing: "), safe_name]),
+                html.Div([html.B("Loaded existing: "), display_name]),
                 html.Div([html.B("Input path: "), input_path], className="small text-muted"),
             ],
             color="success",
