@@ -223,12 +223,12 @@ app.layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.H2("🎬 Auto-segment video"),
+                        html.H2("🎬 Find Objects in Videos"),
                         html.Div(
                             [
                                 html.Div(
-                                    "Upload a video, enter a prompt, then run the Databricks job. "
-                                    "When it finishes, the output video will appear."
+                                    "Upload a video (or enter a full volume path) and enter a prompt to find objects in the video. "
+                                    "When it finishes, an edited version of the video will appear, the objects will be highlighted, and a description of the objects found will be generated."
                                 )
                             ],
                             className="text-muted",
@@ -704,12 +704,12 @@ def poll_run(n: int, run_id: Optional[int], output_path: Optional[str]):
             desc_txt = _download_text(w, desc_path)
             desc = (
                 dbc.Alert(
-                    [html.B("AI-Generated Description: "), html.Span(desc_txt or "No description found yet.")],
+                    [html.B("AI-Generated Description:"), html.Br(), dcc.Markdown(desc_txt or "No description found yet.")],
                     color="light",
                 )
                 if desc_txt is not None
                 else html.Div(
-                    ["Description: ", html.Span("No description found yet.", className="text-muted")]
+                    ["AI-Generated Description: ", html.Span("No description found yet.", className="text-muted")]
                 )
             )
             return dbc.Alert(status_bits, color="success"), True, video, desc, controls_style
@@ -762,7 +762,7 @@ def lookup_output(n_clicks: int, filename: Optional[str]):
         desc_txt = _download_text(w, desc_path)
         desc = (
             dbc.Alert(
-                [html.B("Description: "), html.Span(desc_txt or "No description found yet.")],
+                [html.B("Description:"), html.Br(), dcc.Markdown(desc_txt or "No description found yet.")],
                 color="light",
             )
             if desc_txt is not None
