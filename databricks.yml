@@ -7,6 +7,34 @@ resources:
       name: segment-video-app
       description: "Upload a video + prompt; trigger Databricks Job to segment; display output from Volumes."
       source_code_path: ./app
+  jobs:
+    auto_segment_video:
+      name: auto-segment-video
+      email_notifications:
+        on_failure:
+          - justin.monaldo@databricks.com
+        no_alert_for_skipped_runs: true
+      notification_settings:
+        no_alert_for_skipped_runs: true
+      trigger:
+        pause_status: PAUSED
+        file_arrival:
+          url: /Volumes/justinm/cv/auto_segment/inputs/
+      max_concurrent_runs: 5
+      tasks:
+        - task_key: auto-segment-video
+          notebook_task:
+            notebook_path: ./job/auto-segment-video-job-fmapi.py
+            base_parameters:
+              trigger_location: "{{job.trigger.file_arrival.location}}"
+              prompt: weimaraner
+              frame_stride: "30"
+              truncate: "1"
+            source: WORKSPACE
+      queue:
+        enabled: true
+      budget_policy_id: f20a71f9-ec07-4b92-a33f-9f3d3f23c428
+      performance_target: PERFORMANCE_OPTIMIZED
 
 targets:
   dev:
