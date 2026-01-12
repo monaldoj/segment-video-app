@@ -429,7 +429,7 @@ flash.load_context(context = flash_context)
 import os
 from PIL import Image
 
-image_dir = "/Volumes/pubsec_video/cv/images"
+image_dir = "/Volumes/pubsec_video_processing/cv/images"
 image_files = [f for f in os.listdir(image_dir) if f.lower().endswith('.png')]
 pil_images = [Image.open(os.path.join(image_dir, f)).convert("RGB") for f in image_files]
 
@@ -466,7 +466,7 @@ def image_to_base64(image_path):
     return base64_string
 
 # Example usage
-image_path = "/Volumes/pubsec_video/cv/images/bruno.png"
+image_path = "/Volumes/pubsec_video_processing/cv/images/bruno.png"
 image_path = image_to_base64(image_path)
 print(type(image_path))
 
@@ -489,7 +489,7 @@ from mlflow.tracking import MlflowClient
 from mlflow.models import infer_signature
 
 # specify the location the model will be saved/registered in Unity Catalog
-catalog = "pubsec_video"
+catalog = "pubsec_video_processing"
 schema = "cv"
 model_name = "transformers-qwen3-2B-vision"
 model_full_name = f"{catalog}.{schema}.{model_name}"

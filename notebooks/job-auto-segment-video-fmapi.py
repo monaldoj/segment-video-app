@@ -4,7 +4,7 @@ prompt = dbutils.widgets.get("prompt")
 frame_stride = int(dbutils.widgets.get("frame_stride"))
 truncate = dbutils.widgets.get("truncate")
 
-# trigger_location = '/Volumes/pubsec_video/cv/auto_segment/inputs/usps_youtube_example.mov'
+# trigger_location = '/Volumes/pubsec_video_processing/cv/auto_segment/inputs/usps_youtube_example.mov'
 # prompt = 'employees or postal workers handling or delivering mail'
 # frame_stride = 30
 # truncate = True
@@ -85,7 +85,7 @@ else:
 from huggingface_hub import login
 import os
 
-hf_pat = dbutils.secrets.get("justin-fe-secrets", "hf_pat")
+hf_pat = dbutils.secrets.get("justinm-buildathon-secrets", "hf_pat")
 os.environ["HF_TOKEN"] = hf_pat
 login(token=hf_pat)
 
@@ -93,14 +93,14 @@ login(token=hf_pat)
 
 import mlflow
 
-model = mlflow.pyfunc.load_model("models:/pubsec_video.cv.transformers-sam3-video@job")
+model = mlflow.pyfunc.load_model("models:/pubsec_video_processing.cv.transformers-sam3-video@job")
 
 # COMMAND ----------
 
 def write_results(FILE_URL, results):
   import os
 
-  if FILE_URL.startswith("/Volumes/pubsec_video/cv/auto_segment/inputs/"):
+  if FILE_URL.startswith("/Volumes/pubsec_video_processing/cv/auto_segment/inputs/"):
     OUTPUT_FILE_URL = FILE_URL.replace("inputs", "outputs")
     output_dir = os.path.dirname(OUTPUT_FILE_URL)
   else:
@@ -437,7 +437,7 @@ video.release()
 FMAPI_SERVING_URL = f'https://{spark.conf.get("spark.databricks.workspaceUrl")}'
 FMAPI_BASE_URL = f'{FMAPI_SERVING_URL}/serving-endpoints'
 print(f'🎯 FMAPI_BASE_URL: {FMAPI_BASE_URL}')
-FMAPI_API_TOKEN = dbutils.secrets.get('auth', 'db-pat')
+FMAPI_API_TOKEN = dbutils.secrets.get('justinm-buildathon-secrets', 'db_pat')
 # Serving endpoint I created using my own GCP acc't
 # to side-step issues w/ limits databricks hosted model issues.
 FMAPI_MODEL = 'stsu-gemini-3-flash' 
@@ -498,7 +498,7 @@ dbutils.fs.put(txt_filename, text, True)
 
 # COMMAND ----------
 
-# captioning_model = mlflow.pyfunc.load_model("models:/pubsec_video.cv.transformers-blip@job")
+# captioning_model = mlflow.pyfunc.load_model("models:/pubsec_video_processing.cv.transformers-blip@job")
 
 # COMMAND ----------
 

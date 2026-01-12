@@ -6,7 +6,7 @@
 from huggingface_hub import login
 import os
 
-hf_pat = dbutils.secrets.get("justin-fe-secrets", "hf_pat")
+hf_pat = dbutils.secrets.get("justinm-buildathon-secrets", "hf_pat")
 os.environ["HF_TOKEN"] = hf_pat
 login(token=hf_pat)
 
@@ -172,7 +172,7 @@ def image_to_base64(image_path):
     return base64_string
 
 # Example usage
-image_path = "/Volumes/pubsec_video/cv/images/bruno.png"
+image_path = "/Volumes/pubsec_video_processing/cv/images/bruno.png"
 image_path = image_to_base64(image_path)
 prompt = "weimaraner"
 model_input = {
@@ -271,7 +271,7 @@ from mlflow.tracking import MlflowClient
 from mlflow.models import infer_signature
 
 # specify the location the model will be saved/registered in Unity Catalog
-catalog = "pubsec_video"
+catalog = "pubsec_video_processing"
 schema = "cv"
 model_name = "transformers-sam3"
 model_full_name = f"{catalog}.{schema}.{model_name}"
@@ -391,7 +391,7 @@ latest_model = mlflow_client.get_model_version(model_full_name, str(latest_versi
 # use databricks-sdk to launch the model serving endpoint
 wc = WorkspaceClient()
 served_models =[ServedModelInput(model_name=model_full_name, scale_to_zero_enabled=True,
-                                environment_vars={"HF_TOKEN":"{{secrets/justin-fe-secrets/hf_pat}}"},
+                                environment_vars={"HF_TOKEN":"{{secrets/justinm-buildathon-secrets/hf_pat}}"},
                                 model_version=latest_model.version,
                                 workload_size=ServedModelInputWorkloadSize.SMALL, # compute workload size for necessary concurrency 
                                 workload_type=ServedModelInputWorkloadType.GPU_SMALL if using_gpu else ServedModelInputWorkloadType.CPU, # CPU or GPU workload type
@@ -424,9 +424,9 @@ DATABRICKS_HOST = dbutils.notebook.entry_point.getDbutils().notebook().getContex
 try:
   endpoint_name = model_full_name.replace(".","_") + "_endpoint"
 except:
-  endpoint_name = "pubsec_video_cv_transformers-sam3_endpoint"
+  endpoint_name = "pubsec_video_processing_cv_transformers-sam3_endpoint"
 
-image_path = "/Volumes/pubsec_video/cv/images/bruno.png"
+image_path = "/Volumes/pubsec_video_processing/cv/images/bruno.png"
 image_path = "https://www.prodograw.com/wp-content/uploads/2025/09/Weimaraner-2-1.jpg"
 prompt = "weimaraner"
 model_input = {

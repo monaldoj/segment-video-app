@@ -40,5 +40,9 @@ targets:
   dev:
     default: true
     mode: development
+  prod:
+    mode: production
+    workspace:
+      root_path: /Workspace/Shared/pubsec_video/
 
 
