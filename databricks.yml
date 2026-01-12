@@ -19,12 +19,12 @@ resources:
       trigger:
         pause_status: PAUSED
         file_arrival:
-          url: /Volumes/justinm/cv/auto_segment/inputs/
+          url: /Volumes/pubsec_video/cv/auto_segment/inputs/
       max_concurrent_runs: 5
       tasks:
         - task_key: auto-segment-video
           notebook_task:
-            notebook_path: ./job/auto-segment-video-job-fmapi.py
+            notebook_path: ./notebooks/job-auto-segment-video-fmapi.py
             base_parameters:
               trigger_location: "{{job.trigger.file_arrival.location}}"
               prompt: weimaraner
@@ -33,7 +33,7 @@ resources:
             source: WORKSPACE
       queue:
         enabled: true
-      budget_policy_id: f20a71f9-ec07-4b92-a33f-9f3d3f23c428
+      # budget_policy_id: f20a71f9-ec07-4b92-a33f-9f3d3f23c428
       performance_target: PERFORMANCE_OPTIMIZED
 
 targets:

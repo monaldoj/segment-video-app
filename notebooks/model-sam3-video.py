@@ -225,10 +225,10 @@ import os
 MODEL_URI = "your_model_uri_here"  # e.g., "models:/sam3_video/1" or "runs:/run_id/model"
 video_name = "maren_jack"
 
-VIDEO_PATH = f"/Volumes/justinm/cv/images/{video_name}.MOV"  # Your input video
+VIDEO_PATH = f"/Volumes/pubsec_video/cv/images/{video_name}.MOV"  # Your input video
 PROMPT = "boy in white sweater with black stripes"  # Your segmentation prompt
-# OUTPUT_FRAMES_DIR = "/Volumes/justinm/cv/images/bruno1_output_dir/"
-OUTPUT_VIDEO_PATH = f"/Volumes/justinm/cv/images/{video_name}_output.mp4"
+# OUTPUT_FRAMES_DIR = "/Volumes/pubsec_video/cv/images/bruno1_output_dir/"
+OUTPUT_VIDEO_PATH = f"/Volumes/pubsec_video/cv/images/{video_name}_output.mp4"
 FPS = 30  # Adjust to match your video's FPS
 
 # Create output directory
@@ -262,7 +262,7 @@ from mlflow.tracking import MlflowClient
 from mlflow.models import infer_signature
 
 # specify the location the model will be saved/registered in Unity Catalog
-catalog = "justinm"
+catalog = "pubsec_video"
 schema = "cv"
 model_name = "transformers-sam3-video"
 model_full_name = f"{catalog}.{schema}.{model_name}"
@@ -413,8 +413,8 @@ print(len(results))
 
 # COMMAND ----------
 
-# OUTPUT_FRAMES_DIR = "/Volumes/justinm/cv/images/bruno1_output_dir/"
-OUTPUT_VIDEO_PATH = f"/Volumes/justinm/cv/images/{video_name}_output2.mp4"
+# OUTPUT_FRAMES_DIR = "/Volumes/pubsec_video/cv/images/bruno1_output_dir/"
+OUTPUT_VIDEO_PATH = f"/Volumes/pubsec_video/cv/images/{video_name}_output2.mp4"
 
 # Open original video to get frames
 print("Processing frames and applying masks...")
