@@ -21,6 +21,9 @@ resources:
         file_arrival:
           url: /Volumes/pubsec_video/cv/auto_segment/inputs/
       max_concurrent_runs: 5
+      permissions:
+        - service_principal_name: caa20ee5-cc8b-44b3-8b92-50feec0ef85b
+          level: CAN_MANAGE_RUN
       tasks:
         - task_key: auto-segment-video
           notebook_task:
@@ -43,6 +46,6 @@ targets:
   prod:
     mode: production
     workspace:
-      root_path: /Workspace/Shared/pubsec_video/
+      root_path: /Workspace/Shared/pubsec_video_processing/
 
 
