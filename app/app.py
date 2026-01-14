@@ -118,6 +118,7 @@ def _start_run(
     prompt: str,
     frame_stride: int = 5,
     truncate: bool = False,
+    threshold: float = 0.5,
 ) -> int:
     run = w.jobs.run_now(
         job_id=JOB_ID,
@@ -127,6 +128,7 @@ def _start_run(
             "prompt": prompt,
             "frame_stride": str(int(frame_stride)),
             "truncate": str(bool(truncate)).lower(),
+            "threshold": str(float(threshold)),
         },
     )
     return int(run.run_id)
@@ -389,6 +391,30 @@ app.layout = dbc.Container(
                                                 ],
                                                 className="mt-3",
                                             ),
+                                            dbc.Row(
+                                                [
+                                                    dbc.Col(
+                                                        [
+                                                            html.Label("Threshold"),
+                                                            dbc.Input(
+                                                                id="threshold",
+                                                                type="number",
+                                                                min=0.25,
+                                                                max=0.9,
+                                                                step=0.05,
+                                                                value=0.5,
+                                                            ),
+                                                            html.Small(
+                                                                "Detection sensitivity (lower = more sensitive, more false positives).",
+                                                                className="text-muted",
+                                                            ),
+                                                        ],
+                                                        width=12,
+                                                        md=6,
+                                                    ),
+                                                ],
+                                                className="mt-3",
+                                            ),
                                             html.Hr(),
                                             dbc.Row(
                                                 [
@@ -424,7 +450,7 @@ app.layout = dbc.Container(
                         dcc.Store(id="store-upload-path"),
                         dcc.Store(id="store-output-path"),
                         dcc.Store(id="store-run-id"),
-                        dcc.Interval(id="poll-interval", interval=2500, n_intervals=0, disabled=True),
+                        dcc.Interval(id="poll-interval", interval=1500, n_intervals=0, disabled=True),
                     ],
                     width=12,
                     lg=6,
@@ -610,6 +636,7 @@ def handle_load_existing(n_clicks: int, filename: Optional[str]):
     State("prompt", "value"),
     State("frame-stride", "value"),
     State("truncate", "value"),
+    State("threshold", "value"),
     prevent_initial_call=True,
 )
 def start_job(
@@ -618,6 +645,7 @@ def start_job(
     prompt: Optional[str],
     frame_stride: Optional[int],
     truncate: Optional[str],
+    threshold: Optional[float],
 ):
     if not n_clicks:
         raise dash.exceptions.PreventUpdate
@@ -635,6 +663,13 @@ def start_job(
 
     tr = str(truncate).lower() == "true" if truncate is not None else False
 
+    try:
+        th = float(threshold) if threshold is not None else 0.5
+    except Exception:
+        return None, True, dbc.Alert("Threshold must be a number between 0 and 1.", color="warning"), {}
+    if th < 0.0 or th > 1.0:
+        return None, True, dbc.Alert("Threshold must be between 0 and 1.", color="warning"), {}
+
     w = _get_client()
     try:
         run_id = _start_run(
@@ -643,6 +678,7 @@ def start_job(
             prompt=prompt.strip(),
             frame_stride=fs,
             truncate=tr,
+            threshold=th,
         )
     except Exception as e:
         return None, True, dbc.Alert(f"Failed to start job: {e}", color="danger"), {}
@@ -789,6 +825,7 @@ def lookup_output(n_clicks: int, filename: Optional[str]):
     Output("prompt", "value", allow_duplicate=True),
     Output("frame-stride", "value", allow_duplicate=True),
     Output("truncate", "value", allow_duplicate=True),
+    Output("threshold", "value", allow_duplicate=True),
     Output("poll-interval", "disabled", allow_duplicate=True),
     Output("input-controls", "style", allow_duplicate=True),
     Output("existing-filename", "value", allow_duplicate=True),
@@ -798,7 +835,7 @@ def lookup_output(n_clicks: int, filename: Optional[str]):
 def reset_all(n_clicks: int):
     if not n_clicks:
         raise dash.exceptions.PreventUpdate
-    return None, None, None, None, None, None, None, None, "", 5, "false", True, {}, ""
+    return None, None, None, None, None, None, None, None, "", 5, "false", 0.5, True, {}, ""
 
 
 if __name__ == "__main__":

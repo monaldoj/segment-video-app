@@ -19,7 +19,7 @@ resources:
       trigger:
         pause_status: PAUSED
         file_arrival:
-          url: /Volumes/pubsec_video/cv/auto_segment/inputs/
+          url: /Volumes/pubsec_video_processing/cv/auto_segment/inputs/
       max_concurrent_runs: 5
       permissions:
         - service_principal_name: caa20ee5-cc8b-44b3-8b92-50feec0ef85b
@@ -27,11 +27,12 @@ resources:
       tasks:
         - task_key: auto-segment-video
           notebook_task:
-            notebook_path: ./notebooks/job-auto-segment-video-fmapi.py
+            notebook_path: ./notebooks/job-auto-segment-video.ipynb
             base_parameters:
               trigger_location: "{{job.trigger.file_arrival.location}}"
               prompt: weimaraner
               frame_stride: "30"
+              threshold: "0.5"
               truncate: "1"
             source: WORKSPACE
       queue:
