@@ -119,6 +119,8 @@ def _start_run(
     frame_stride: int = 5,
     truncate: bool = False,
     threshold: float = 0.5,
+    segmentation_model: str = "facebook/sam3",
+    summarization_model: str = "google/gemini-3-flash",
 ) -> int:
     run = w.jobs.run_now(
         job_id=JOB_ID,
@@ -129,6 +131,8 @@ def _start_run(
             "frame_stride": str(int(frame_stride)),
             "truncate": str(bool(truncate)).lower(),
             "threshold": str(float(threshold)),
+            "segmentation_model": segmentation_model,
+            "summarization_model": summarization_model,
         },
     )
     return int(run.run_id)
@@ -420,8 +424,70 @@ app.layout = dbc.Container(
                                                 [
                                                     dbc.Col(
                                                         [
+                                                            html.Div("3) Select Models", style={"fontWeight": "bold", "marginBottom": "0.5rem"}),
+                                                        ],
+                                                        width=12,
+                                                    )
+                                                ]
+                                            ),
+                                            dbc.Row(
+                                                [
+                                                    dbc.Col(
+                                                        [
+                                                            html.Label("Segmentation Model"),
+                                                            dcc.Dropdown(
+                                                                id="segmentation-model",
+                                                                options=[
+                                                                    {"label": "facebook/sam3", "value": "facebook/sam3"},
+                                                                    {"label": "facebook/sam2.1", "value": "facebook/sam2.1"},
+                                                                    {"label": "facebook/mask2former", "value": "facebook/mask2former"},
+                                                                    {"label": "nvidia/segformer", "value": "nvidia/segformer"},
+                                                                    {"label": "ultralytics/YOLOv11", "value": "ultralytics/YOLOv11"},
+                                                                    {"label": "ultralytics/YOLOv8", "value": "ultralytics/YOLOv8"},
+                                                                ],
+                                                                value="facebook/sam3",
+                                                                clearable=False,
+                                                            ),
+                                                            html.Small(
+                                                                "Select the model to use for object segmentation.",
+                                                                className="text-muted",
+                                                            ),
+                                                        ],
+                                                        width=12,
+                                                        md=6,
+                                                    ),
+                                                    dbc.Col(
+                                                        [
+                                                            html.Label("Summarization Model"),
+                                                            dcc.Dropdown(
+                                                                id="summarization-model",
+                                                                options=[
+                                                                    {"label": "google/gemini-3-flash", "value": "google/gemini-3-flash"},
+                                                                    {"label": "salesforce/blip", "value": "salesforce/blip"},
+                                                                    {"label": "qwen/qwen3-vl-2b-instruct", "value": "qwen/qwen3-vl-2b-instruct"},
+                                                                ],
+                                                                value="google/gemini-3-flash",
+                                                                clearable=False,
+                                                            ),
+                                                            html.Small(
+                                                                "Select the model to use for generating descriptions.",
+                                                                className="text-muted",
+                                                            ),
+                                                        ],
+                                                        width=12,
+                                                        md=6,
+                                                        className="mt-3 mt-md-0",
+                                                    ),
+                                                ],
+                                                className="mt-3",
+                                            ),
+                                            html.Hr(),
+                                            dbc.Row(
+                                                [
+                                                    dbc.Col(
+                                                        [
                                                             dbc.Button(
-                                                                "3) Run auto-segment job",
+                                                                "Run auto-segment job",
                                                                 id="run-job",
                                                                 color="primary",
                                                                 className="me-2",
@@ -637,6 +703,8 @@ def handle_load_existing(n_clicks: int, filename: Optional[str]):
     State("frame-stride", "value"),
     State("truncate", "value"),
     State("threshold", "value"),
+    State("segmentation-model", "value"),
+    State("summarization-model", "value"),
     prevent_initial_call=True,
 )
 def start_job(
@@ -646,6 +714,8 @@ def start_job(
     frame_stride: Optional[int],
     truncate: Optional[str],
     threshold: Optional[float],
+    segmentation_model: Optional[str],
+    summarization_model: Optional[str],
 ):
     if not n_clicks:
         raise dash.exceptions.PreventUpdate
@@ -679,6 +749,8 @@ def start_job(
             frame_stride=fs,
             truncate=tr,
             threshold=th,
+            segmentation_model=segmentation_model or "facebook/sam3",
+            summarization_model=summarization_model or "google/gemini-3-flash",
         )
     except Exception as e:
         return None, True, dbc.Alert(f"Failed to start job: {e}", color="danger"), {}
@@ -826,6 +898,8 @@ def lookup_output(n_clicks: int, filename: Optional[str]):
     Output("frame-stride", "value", allow_duplicate=True),
     Output("truncate", "value", allow_duplicate=True),
     Output("threshold", "value", allow_duplicate=True),
+    Output("segmentation-model", "value", allow_duplicate=True),
+    Output("summarization-model", "value", allow_duplicate=True),
     Output("poll-interval", "disabled", allow_duplicate=True),
     Output("input-controls", "style", allow_duplicate=True),
     Output("existing-filename", "value", allow_duplicate=True),
@@ -835,7 +909,7 @@ def lookup_output(n_clicks: int, filename: Optional[str]):
 def reset_all(n_clicks: int):
     if not n_clicks:
         raise dash.exceptions.PreventUpdate
-    return None, None, None, None, None, None, None, None, "", 5, "false", 0.5, True, {}, ""
+    return None, None, None, None, None, None, None, None, "", 5, "false", 0.5, "facebook/sam3", "google/gemini-3-flash", True, {}, ""
 
 
 if __name__ == "__main__":

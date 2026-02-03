@@ -1,6 +1,10 @@
 bundle:
   name: segment-video-app
 
+variables:
+  SERVICE_PRINCIPAL_NAME:
+    description: "The name of the service principal of the app so it can manage the job."
+
 resources:
   apps:
     segment_video_app:
@@ -22,7 +26,7 @@ resources:
           url: /Volumes/pubsec_video_processing/cv/auto_segment/inputs/
       max_concurrent_runs: 5
       permissions:
-        - service_principal_name: caa20ee5-cc8b-44b3-8b92-50feec0ef85b
+        - service_principal_name: ${var.SERVICE_PRINCIPAL_NAME}
           level: CAN_MANAGE_RUN
       tasks:
         - task_key: auto-segment-video
