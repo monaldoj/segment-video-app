@@ -2,7 +2,7 @@
 
 A small Plotly Dash app designed to run as a **Databricks App** and be deployed via **Databricks Asset Bundles (DABs)**.
 
-![segment-video-app-gif](https://github.com/user-attachments/assets/f613f43d-c9d7-4fea-97fb-59bc21db66f2)
+![segment-video-app-gif](https://github.com/user-attachments/assets/53515de6-9bed-4dd5-af7d-76ee9ddc181e)
 
 It lets a user:
 
